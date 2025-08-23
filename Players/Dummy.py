@@ -18,7 +18,3 @@ def step(board):
                 else:
                     return f"pw-[{i},{j}]"
 
-
-
-
-    raise NotImplemented

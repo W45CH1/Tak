@@ -7,7 +7,7 @@ from Tak import Tak
 class TakController:
     def __init__(self, master, row, column, board_size=3):
         frame = Frame(master)
-        frame.grid(row=row, column=column, padx=20, pady=20)
+        frame.grid(row=row, column=column)
 
         self.info_team_white = Label(frame, text="", bg="white", fg="gray")
         self.info_team_white.grid(row=0, column=0, sticky="ew")
@@ -61,7 +61,7 @@ class TakController:
                             (i + 1 - size_adjustment) * cell_size,
                             (j + 1 - size_adjustment) * cell_size,
                             fill=fill,
-                            outline='',
+                            outline='#CCCCCC' if fill == "white" else "#333333",
                             tags="pieces"
                         )
                     elif piece.kind == "capstone":
