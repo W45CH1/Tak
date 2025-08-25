@@ -40,7 +40,8 @@ class GameController:
             self.player_controller_white.write_to_output("".join(traceback.format_exception(*sys.exc_info())))
             self.player_controller_black.write_to_output("".join(traceback.format_exception(*sys.exc_info())))
             return False
-        except Exception as _:
+        except Exception as err:
+            #raise err
             try:
                 player.punish("".join(traceback.format_exception(*sys.exc_info())))
             except GameEndException as end:

@@ -19,7 +19,6 @@ class Piece:
         assert isinstance(team, Team)
         self.team = team
         assert isinstance(kind, str)
-        kind = kind.strip().replace(" ", "").replace("_", "").lower()
         assert kind == "stone" or kind == "wall" or kind == "capstone"
         self.kind = kind
 
@@ -41,45 +40,42 @@ class Board:
             for _ in range(board_size):
                 self.__board[i].append([])
 
-    def __setitem__(self, item, value):
-        if len(item) == 2:
-            if item[0] in range(0, len(self.__board)):
-                if item[1] in range(0, len(self.__board[item[0]])):
+    def __setitem__(self, index, value):
+        if len(index) == 2:
+            if index[0] in range(0, len(self.__board)):
+                if index[1] in range(0, len(self.__board[index[0]])):
                     if type(value) == list:
-                        self.__board[item[0]][item[1]] = value.copy()
+                        self.__board[index[0]][index[1]] = value.copy()
+                        return
                     elif type(value) == Piece:
-                        self.__board[item[0]][item[1]] = [value]
-                    else:
-                        raise ValueError
-        elif len(item) == 3:
-            if item[0] in range(0, len(self.__board)):
-                if item[1] in range(0, len(self.__board[item[0]])):
-                    if item[2] in range(0, len(self.__board[item[0]][item[1]])):
+                        self.__board[index[0]][index[1]] = [value]
+                        return
+        elif len(index) == 3:
+            if index[0] in range(0, len(self.__board)):
+                if index[1] in range(0, len(self.__board[index[0]])):
+                    if index[2] in range(0, len(self.__board[index[0]][index[1]])):
                         assert type(value) == Piece
-                        self.__board[item[0]][item[1]][item[2]] = [value]
-        else:
-            raise ValueError
+                        self.__board[index[0]][index[1]][index[2]] = [value]
+                        return
+        raise ValueError
 
-    def __getitem__(self, item):
-        if len(item) == 2:
-            if item[0] in range(-len(self.__board), len(self.__board)):
-                if item[1] in range(-len(self.__board[item[0]]), len(self.__board[item[0]])):
-                    return self.__board[item[0]][item[1]]
-            raise ValueError
-        elif len(item) == 3:
-            if item[0] in range(-len(self.__board), len(self.__board)):
-                if item[1] in range(-len(self.__board[item[0]]), len(self.__board[item[0]])):
-                    if item[2] in range(-len(self.__board[item[0]][item[1]]), len(self.__board[item[0]][item[1]])):
-                        return self.__board[item[0]][item[1]][item[2]]
-            raise ValueError
-        else:
-            raise ValueError
+    def __getitem__(self, index):
+        if len(index) == 2:
+            if index[0] in range(-len(self.__board), len(self.__board)):
+                if index[1] in range(-len(self.__board[index[0]]), len(self.__board[index[0]])):
+                    return self.__board[index[0]][index[1]]
+        elif len(index) == 3:
+            if index[0] in range(-len(self.__board), len(self.__board)):
+                if index[1] in range(-len(self.__board[index[0]]), len(self.__board[index[0]])):
+                    if index[2] in range(-len(self.__board[index[0]][index[1]]), len(self.__board[index[0]][index[1]])):
+                        return self.__board[index[0]][index[1]][index[2]]
+        raise ValueError
 
     def copy(self):
-        out = Board(self.__board_size)
+        out = Board(self.board_size())
 
-        for i in range(self.__board_size):
-            for j in range(self.__board_size):
+        for i in range(self.board_size()):
+            for j in range(self.board_size()):
                 out[i, j] = [p.copy() for p in self[i, j].copy()]
         return out
 
@@ -98,6 +94,8 @@ class Team:
     def get_capstone(self):
         return self.__capstones
 
+    def has_piece(self):
+        return self.has_stone() or self.has_capstone()
     def has_stone(self):
         return self.__stones > 0
 
@@ -125,82 +123,74 @@ class Tak:
 
     def place_stone(self, team, position):
         assert team is self.team_white or team is self.team_black
+        assert len(position) == 2
         assert position[0] in range(0, self.board_size)
         assert position[1] in range(0, self.board_size)
         assert self.board[position] == []
         assert team.has_stone()
         team.use_stone()
         self.board[position] = Piece(team, "stone")
-        self.check_winning()
+        self.check_winning(team)
 
     def place_wall(self, team, position):
         assert team is self.team_white or team is self.team_black
+        assert len(position) == 2
         assert position[0] in range(0, self.board_size)
         assert position[1] in range(0, self.board_size)
         assert self.board[position] == []
         assert team.has_stone()
         team.use_stone()
         self.board[position] = Piece(team, "wall")
-        self.check_winning()
+        self.check_winning(team)
 
     def place_capstone(self, team, position):
         assert team is self.team_white or team is self.team_black
+        assert len(position) == 2
         assert position[0] in range(0, self.board_size)
         assert position[1] in range(0, self.board_size)
         assert self.board[position] == []
         assert team.has_capstone()
         team.use_capstone()
         self.board[position] = Piece(team, "capstone")
-        self.check_winning()
+        self.check_winning(team)
 
-    def move(self, team, position_from, position_to):
-        assert team is self.team_white or team is self.team_black
-        assert len(position_from) == 2
-        assert len(position_to) == 2
-        assert position_from[0] in range(0, self.board_size)
-        assert position_from[1] in range(0, self.board_size)
-        assert position_to[0] in range(0, self.board_size)
-        assert position_to[1] in range(0, self.board_size)
-        assert len(self.board[position_from]) == 1
-        assert self.board[position_from][0].team is team
-        assert self.board[position_from][0].kind in {"stone", "capstone"}
-        if self.board[position_from][0].kind == "stone":
-            assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind == "stone"
-        elif self.board[position_to][-1] == "wall":
-            assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind in {"stone","wall"}
-            self.board[position_to][-1].kind = "stone"
-        self.board[position_to].append(self.board[position_from][0])
-        self.board[position_from] = []
-        self.check_winning()
 
-    def tumble(self, team, position_from, direction, tumble_count):
+    def move(self, team, position_from, direction, drop_counts):
+        if isinstance(drop_counts,int):
+            drop_counts = (drop_counts,)
+        drop_counts = list(drop_counts)
         assert team is self.team_white or team is self.team_black
         assert len(position_from) == 2
         assert position_from[0] in range(0, self.board_size)
         assert position_from[1] in range(0, self.board_size)
         assert direction in {(0, 1), (0, -1), (1, 0), (-1, 0)}
-        assert len(self.board[position_from]) >= 1
-        assert self.board[position_from, -1].kind in {"stone", "capstone"}
-        assert self.board[position_from, -1].team is team
-        position_to = (position_from[0], position_from[1])
-        while len(tumble_count) != 0:
+        assert len(self.board[position_from]) > 0
+        assert self.board[position_from][-1].team is team
+        count = sum(drop_counts)
+        assert count <= len(self.board[position_from])
+        assert count <= self.board_size
+        new_board = self.board.copy() # We need this copy, so we don't end up in an invalid state, if we throw an exception
+        taking = new_board[position_from][-count:None]
+        new_board[position_from] = new_board[position_from][0:-count]
+        position_to = [position_from[0], position_from[1]]
+        while len(drop_counts) != 0:
             position_to[0] += direction[0]
             position_to[1] += direction[1]
             assert position_to[0] in range(0, self.board_size)
             assert position_to[1] in range(0, self.board_size)
-            if self.board[position_from][0].kind == "stone":
-                assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind == "stone"
-            elif self.board[position_to][-1] == "wall":
-                assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind in {"stone", "wall"}
-                self.board[position_to][-1].kind = "stone"
-            self.board[position_to].extend(self.board[position_from][-tumble_count[0]:None])
-            for _ in range(tumble_count[0]):
-                self.board[position_from].pop()
-            del tumble_count[0]
-        self.check_winning()
+            assert drop_counts[0] > 0
+            if taking[-1].kind in {"stone","wall"} or sum(drop_counts) > 1:
+                assert len(new_board[position_to]) == 0 or new_board[position_to][-1].kind == "stone"
+            elif new_board[position_to][-1] == "capstone":
+                assert len(new_board[position_to]) == 0 or new_board[position_to][-1].kind in {"stone", "wall"}
+                new_board[position_to][-1].kind = "stone"
+            new_board[position_to] = new_board[position_to] + taking[0:drop_counts[0]]
+            taking = taking[drop_counts[0]:None]
+            del drop_counts[0]
+        self.board = new_board
+        self.check_winning(team)
 
-    def check_winning(self):
-
+    def check_winning(self,team):
         white = 0
         black = 0
         filled = 0
@@ -210,14 +200,14 @@ class Tak:
                 if not cell:
                     continue
                 filled += 1
-                if cell[-1].kind != "stone":
+                if cell[-1].kind == "wall":
                     continue
                 if cell[-1].team == self.team_white:
                     white += 1
                 else:
                     black += 1
 
-        if not self.team_white.has_stone() or not self.team_black.has_stone() or filled >= self.board_size ** 2:
+        if not self.team_white.has_piece() or not self.team_black.has_piece() or filled >= self.board_size ** 2:
             if white > black:
                 raise GameEndException(winning_team=white, losing_team=black)
             elif black > white:
@@ -234,19 +224,19 @@ class Tak:
             if board[0, i]:
                 board[0, i, -1].tag.add("W")
 
-        for k in range(self.board_size):
+        for k in range(self.board_size ** 2):
             for i in range(self.board_size):
                 for j in range(self.board_size):
                     if not board[i, j]:
                         continue
-                    team = board[i, j, -1].team
-                    if i > 0 and board[i - 1, j] and board[i - 1, j, -1].team is team:
+                    current_team = board[i, j, -1].team
+                    if i > 0 and board[i - 1, j] and board[i - 1, j, -1].team is current_team:
                         board[i - 1, j, -1].tag.update(board[i, j, -1].tag)
-                    if j > 0 and board[i, j - 1] and board[i, j - 1, -1].team is team:
+                    if j > 0 and board[i, j - 1] and board[i, j - 1, -1].team is current_team:
                         board[i, j - 1, -1].tag.update(board[i, j, -1].tag)
-                    if i < self.board_size - 1 and board[i + 1, j] and board[i + 1, j, -1].team is team:
+                    if i < self.board_size - 1 and board[i + 1, j] and board[i + 1, j, -1].team is current_team:
                         board[i + 1, j, -1].tag.update(board[i, j, -1].tag)
-                    if j < self.board_size - 1 and board[i, j + 1] and board[i, j + 1, -1].team is team:
+                    if j < self.board_size - 1 and board[i, j + 1] and board[i, j + 1, -1].team is current_team:
                         board[i, j + 1, -1].tag.update(board[i, j, -1].tag)
 
         white_winning = False
@@ -264,7 +254,7 @@ class Tak:
                     black_winning = True
 
         if white_winning and black_winning:
-            raise GameEndException(draw=True)
+            raise GameEndException(winning_team=team)
         elif white_winning:
             raise GameEndException(winning_team=self.team_white, losing_team=self.team_black)
         elif black_winning:

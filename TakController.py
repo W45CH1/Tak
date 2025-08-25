@@ -76,14 +76,14 @@ class TakController:
                         )
                     elif piece.kind == "wall":
                         self.canvas.create_polygon(
-                            (i + 0.1) * cell_size,
-                            j * cell_size,
-                            i * cell_size,
-                            (j + 0.1) * cell_size,
-                            (i + 0.9) * cell_size,
-                            (j + 1) * cell_size,
-                            (i + 1) * cell_size,
-                            (j + 0.9) * cell_size,
+                            (i + size_adjustment+  0.1) * cell_size,
+                            (j+size_adjustment) * cell_size,
+                            (i+size_adjustment) * cell_size,
+                            (j + 0.1 + size_adjustment) * cell_size,
+                            (i + 0.9 - size_adjustment) * cell_size,
+                            (j + 1 - size_adjustment) * cell_size,
+                            (i + 1 - size_adjustment) * cell_size,
+                            (j + 0.9 - size_adjustment) * cell_size,
                             fill=fill,
                             outline='',
                             tags="pieces"
@@ -91,7 +91,7 @@ class TakController:
 
     def next_move(self,team,move):
         assert isinstance(move,str)
-        move_args = move.strip().replace(" ","").replace(".",",").lower().split("-")
+        move_args = move.strip().replace(" ","").replace(".",",").lower().split("#")
         move_type = move_args[0]
 
         if move_type == "ps":
@@ -101,8 +101,6 @@ class TakController:
         elif move_type == "pc":
             self.tak.place_capstone(team,eval(move_args[1]))
         elif move_type == "mo":
-            self.tak.move(team, eval(move_args[1]),eval(move_args[2]))
-        elif move_type == "tu":
-            self.tak.tumble(team, eval(move_args[1]),eval(move_args[2]),eval(move_args[3]))
+            self.tak.move(team, eval(move_args[1]), eval(move_args[2]), eval(move_args[3]))
         else:
             raise ValueError
