@@ -164,7 +164,11 @@ class Tak:
         assert len(self.board[position_from]) == 1
         assert self.board[position_from][0].team is team
         assert self.board[position_from][0].kind in {"stone", "capstone"}
-        assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind == "stone"
+        if self.board[position_from][0].kind == "stone":
+            assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind == "stone"
+        elif self.board[position_to][-1] == "wall":
+            assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind in {"stone","wall"}
+            self.board[position_to][-1].kind = "stone"
         self.board[position_to].append(self.board[position_from][0])
         self.board[position_from] = []
         self.check_winning()
@@ -184,8 +188,11 @@ class Tak:
             position_to[1] += direction[1]
             assert position_to[0] in range(0, self.board_size)
             assert position_to[1] in range(0, self.board_size)
-            assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind == "stone"
-
+            if self.board[position_from][0].kind == "stone":
+                assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind == "stone"
+            elif self.board[position_to][-1] == "wall":
+                assert len(self.board[position_to]) == 0 or self.board[position_to, -1].kind in {"stone", "wall"}
+                self.board[position_to][-1].kind = "stone"
             self.board[position_to].extend(self.board[position_from][-tumble_count[0]:None])
             for _ in range(tumble_count[0]):
                 self.board[position_from].pop()
@@ -234,13 +241,13 @@ class Tak:
                         continue
                     team = board[i, j, -1].team
                     if i > 0 and board[i - 1, j] and board[i - 1, j, -1].team is team:
-                        board[i - 1, j,-1].tag.update(board[i, j,-1].tag)
+                        board[i - 1, j, -1].tag.update(board[i, j, -1].tag)
                     if j > 0 and board[i, j - 1] and board[i, j - 1, -1].team is team:
-                        board[i, j - 1,-1].tag.update(board[i, j,-1].tag)
+                        board[i, j - 1, -1].tag.update(board[i, j, -1].tag)
                     if i < self.board_size - 1 and board[i + 1, j] and board[i + 1, j, -1].team is team:
-                        board[i + 1, j,-1].tag.update(board[i, j,-1].tag)
+                        board[i + 1, j, -1].tag.update(board[i, j, -1].tag)
                     if j < self.board_size - 1 and board[i, j + 1] and board[i, j + 1, -1].team is team:
-                        board[i, j + 1,-1].tag.update(board[i, j,-1].tag)
+                        board[i, j + 1, -1].tag.update(board[i, j, -1].tag)
 
         white_winning = False
         black_winning = False
