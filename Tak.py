@@ -125,7 +125,7 @@ class Tak:
         assert len(position_from) == 2
         assert position_from[0] in range(0, self.board_size)
         assert position_from[1] in range(0, self.board_size)
-        direction_dict = {"n":(0,-1),"e":(1,0),"s":(0,1),"w":(-1,0)}
+        direction_dict = {"n":(-1,0),"e":(0,1),"s":(1,0),"w":(0,-1)}
         assert direction in {"n","w","s","e"}
         direction = direction_dict[direction]
         assert len(self.board[position_from]) > 0

@@ -49,7 +49,7 @@ class TakController:
         self.canvas.delete("pieces")
         for i in range(self.board_size):
             for j in range(self.board_size):
-                pieces = self.tak.board[i, j]
+                pieces = self.tak.board[j, i]
                 for index, piece in enumerate(pieces):
                     fill = "white" if piece.team == self.tak.team_white else "black"
                     size_adjustment = 0.5 * index / len(pieces)

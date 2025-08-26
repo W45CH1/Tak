@@ -25,16 +25,16 @@ g = GameController(root, 1, 1, t, pw, pb)
 t.next_move(t.tak.team_black, "ps;(0,1)")
 
 t.next_move(t.tak.team_white, "ps;(0,0)")
-t.next_move(t.tak.team_white, "mo;(0,0);S;1")
+t.next_move(t.tak.team_white, "mo;(0,0);E;1")
 t.next_move(t.tak.team_white, "ps;(0,0)")
-t.next_move(t.tak.team_white, "mo;(0,0);S;1")
+t.next_move(t.tak.team_white, "mo;(0,0);E;1")
 t.next_move(t.tak.team_black, "ps;(0,0)")
-t.next_move(t.tak.team_black, "mo;(0,0);S;1")
+t.next_move(t.tak.team_black, "mo;(0,0);E;1")
 t.next_move(t.tak.team_black, "ps;(0,0)")
-t.next_move(t.tak.team_black, "mo;(0,0);S;1")
+t.next_move(t.tak.team_black, "mo;(0,0);E;1")
 
-t.next_move(t.tak.team_black, "mo;(0,1);E;(2 ,2)")
-t.next_move(t.tak.team_black, "mo;(2,1);W;1")
+t.next_move(t.tak.team_black, "mo;(0,1);S;(2 ,2)")
+t.next_move(t.tak.team_black, "mo;(2,1);N;1")
 
 t.redraw()
 
