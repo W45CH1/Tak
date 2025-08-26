@@ -1,11 +1,10 @@
-from random import random
-from tkinter import Canvas, Frame, Text, Label
+from tkinter import Canvas, Frame, Label
 
 from Tak import Tak
 
 
 class TakController:
-    def __init__(self, master, row, column, board_size=3):
+    def __init__(self, master, row, column, team_white, team_black, board_size=3):
         frame = Frame(master)
         frame.grid(row=row, column=column)
 
@@ -18,7 +17,7 @@ class TakController:
         self.canvas = Canvas(frame, width=400, height=400, bg="red", highlightthickness=0)
         self.canvas.grid(row=1, columnspan=2, sticky="ew", padx=0, pady=10)
 
-        self.tak = Tak(board_size=board_size)
+        self.tak = Tak(board_size,team_white,team_black)
 
         self.board_size = board_size
 
@@ -91,7 +90,7 @@ class TakController:
 
     def next_move(self,team,move):
         assert isinstance(move,str)
-        move_args = move.strip().replace(" ","").replace(".",",").lower().split("#")
+        move_args = move.strip().replace(" ","").replace(".",",").lower().split(";")
         move_type = move_args[0]
 
         if move_type == "ps":
@@ -101,6 +100,6 @@ class TakController:
         elif move_type == "pc":
             self.tak.place_capstone(team,eval(move_args[1]))
         elif move_type == "mo":
-            self.tak.move(team, eval(move_args[1]), eval(move_args[2]), eval(move_args[3]))
+            self.tak.move(team, eval(move_args[1]), eval('"' + move_args[2].replace('"','') + '"'), eval(move_args[3]))
         else:
             raise ValueError

@@ -21,7 +21,7 @@ class GameEndException(Exception):
 
 
 class PlayerController:
-    def __init__(self, master, row, column, team, remaining_time=None, lives=None):
+    def __init__(self, master, row, column, team):
         frame = Frame(master)
         frame.grid(row=row, column=column, padx=20, pady=20)
 
@@ -37,16 +37,15 @@ class PlayerController:
         self.output['state'] = 'disabled'
         self.output.grid(row=3)
 
-        self.remaining_time = remaining_time
-        self.lives = lives
+        self.team = team
 
-        self.time_label = Label(frame, width=20, text=f"{self.remaining_time} s")
+        self.time_label = Label(frame, width=20, text=f"{self.team.get_time()} s")
         self.time_label.grid(row=0)
 
-        self.live_label = Label(frame, width=20, text=f"{self.lives}♡")
+        self.live_label = Label(frame, width=20, text=f"{self.team.get_lives()}♡")
         self.live_label.grid(row=1)
 
-        self.team = team
+
 
         self.players = {}
         self.selected_player = None
@@ -84,10 +83,10 @@ class PlayerController:
         sys.stdout = output_buffer
         now = time.time()
         out = func(*args)
-        if self.remaining_time is not None:
-            self.remaining_time -= time.time() - now
-            self.time_label['text'] = f"{self.remaining_time} s"
-            if self.remaining_time <= 0:
+        if self.team.get_time() is not None:
+            self.team.use_time(time.time() - now)
+            self.time_label['text'] = f"{self.team.get_time()} s"
+            if self.team.get_time() <= 0:
                 raise GameEndException(losing_team=self.team)
         sys.stdout = real_buffer
         self.write_to_output(output_buffer.getvalue())
@@ -100,10 +99,10 @@ class PlayerController:
         return self.capture_output(self.selected_player.step, board)
 
     def punish(self, message):
-        if self.lives is not None:
-            self.lives -= 1
-            self.live_label['text'] = f"{self.lives}♡"
-            if self.lives <= 0:
+        if self.team.get_lives() is not None:
+            self.team.use_lives()
+            self.live_label['text'] = f"{self.team.get_lives()}♡"
+            if self.team.get_lives() <= 0:
                 raise GameEndException(losing_team=self.team)
 
         self.write_to_output(f"punished for {message}")

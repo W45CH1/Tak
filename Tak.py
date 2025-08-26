@@ -1,17 +1,5 @@
 from PlayerController import GameEndException
-
-
-def calc_stone_count(board_size):
-    assert board_size >= 3
-    if 3 <= board_size <= 8:
-        return [10, 15, 21, 30, 40, 50][board_size - 3]
-
-    return (board_size - 3) * 10
-
-
-def calc_cap_stones(board_size):
-    assert board_size >= 3
-    return (board_size - 3) // 2
+from Team import Team
 
 
 class Piece:
@@ -83,40 +71,14 @@ class Board:
         return self.__board_size
 
 
-class Team:
-    def __init__(self, stones, capstones):
-        self.__stones = stones
-        self.__capstones = capstones
-
-    def get_stones(self):
-        return self.__stones
-
-    def get_capstone(self):
-        return self.__capstones
-
-    def has_piece(self):
-        return self.has_stone() or self.has_capstone()
-    def has_stone(self):
-        return self.__stones > 0
-
-    def has_capstone(self):
-        return self.__capstones > 0
-
-    def use_stone(self):
-        self.__stones -= 1
-
-    def use_capstone(self):
-        self.__capstones -= 1
 
 
 class Tak:
-    def __init__(self, board_size):
-        stones = calc_stone_count(board_size)
-        capstones = calc_cap_stones(board_size)
+    def __init__(self, board_size,team_white,team_black):
         self.board_size = board_size
         self.board = Board(board_size)
-        self.team_white = Team(stones, capstones)
-        self.team_black = Team(stones, capstones)
+        self.team_white = team_white
+        self.team_black = team_black
 
     def get_board(self):
         return self.board.copy()
@@ -163,7 +125,9 @@ class Tak:
         assert len(position_from) == 2
         assert position_from[0] in range(0, self.board_size)
         assert position_from[1] in range(0, self.board_size)
-        assert direction in {(0, 1), (0, -1), (1, 0), (-1, 0)}
+        direction_dict = {"n":(0,-1),"e":(1,0),"s":(0,1),"w":(-1,0)}
+        assert direction in {"n","w","s","e"}
+        direction = direction_dict[direction]
         assert len(self.board[position_from]) > 0
         assert self.board[position_from][-1].team is team
         count = sum(drop_counts)
