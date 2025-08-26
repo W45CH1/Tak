@@ -6,3 +6,6 @@ __pycache__/
 
 # Ignore Custom Bots
 Players/bot*
+
+# Ignore Custom Files
+ignore*
