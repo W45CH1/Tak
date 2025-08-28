@@ -213,13 +213,11 @@ class Tak:
                     white_winning = True
                 else:
                     black_winning = True
-                    print("winning at west:", i)
             if board[-1, i] and "N" in board[-1, i, -1].tag:
                 if board[-1, i, -1].team is self.team_white:
                     white_winning = True
                 else:
                     black_winning = True
-                    print("winning at borth:", i)
 
         if white_winning and black_winning:
             raise GameEndException(winning_team=team)
