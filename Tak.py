@@ -182,16 +182,18 @@ class Tak:
         # Die Implementierung ist in O(n^3), ich weiß, das es besser geht
         board = self.board.copy()  # Damit ich nicht in dem Echten spielbrett tags setze
         for i in range(self.board_size):
-            if board[i, 0]:
-                board[i, 0, -1].tag.add("N")
+            if board[i, 0] and board[i, 0, -1].kind != "wall":
+                board[i, 0, -1].tag.add("W")
 
-            if board[0, i]:
-                board[0, i, -1].tag.add("W")
+            if board[0, i] and board[0, i, -1].kind != "wall":
+                board[0, i, -1].tag.add("N")
 
         for k in range(self.board_size ** 2):
             for i in range(self.board_size):
                 for j in range(self.board_size):
                     if not board[i, j]:
+                        continue
+                    if board[i, j, -1].kind == "wall":
                         continue
                     current_team = board[i, j, -1].team
                     if i > 0 and board[i - 1, j] and board[i - 1, j, -1].team is current_team:
@@ -206,12 +208,12 @@ class Tak:
         white_winning = False
         black_winning = False
         for i in range(self.board_size):
-            if board[i, -1] and "N" in board[i, -1, -1].tag:
+            if board[i, -1] and "W" in board[i, -1, -1].tag:
                 if board[i, -1, -1].team is self.team_white:
                     white_winning = True
                 else:
                     black_winning = True
-            if board[-1, i] and "W" in board[-1, i, -1].tag:
+            if board[-1, i] and "N" in board[-1, i, -1].tag:
                 if board[-1, i, -1].team is self.team_white:
                     white_winning = True
                 else:
