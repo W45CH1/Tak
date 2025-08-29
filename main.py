@@ -1,4 +1,5 @@
 from tkinter import *
+import platform
 
 from GameController import GameController
 from PlayerController import PlayerController
@@ -6,12 +7,14 @@ from TakController import TakController
 from Team import Team
 
 
-
 root = Tk()
 root.resizable(width=False, height=False)
 root.title("Tak")
-root.iconphoto(False, PhotoImage(file="Tak.png"))
-root.iconbitmap("Tak.ico")
+if platform.system() == "Windows":
+    root.iconbitmap("Tak.ico")
+elif platform.system() == "Darwin":
+    root.iconphoto(False, PhotoImage(file="Tak.png"))
+
 BOARD_SIZE = 5
 tw = Team(BOARD_SIZE)
 tb = Team(BOARD_SIZE)
