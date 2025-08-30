@@ -1,4 +1,4 @@
-- Der Gesamte Bot muss in einer Pythin file geschrieben werden
+- Der Gesamte Bot muss in einer Python file geschrieben werden
 - Der Name des Bots sollte mit __bot__ beginnen
 - Der Bot muss eine __start__ und eine __step__ funktion erhalten
 - Jede Form des State muss in __start__ initialisiert werden. Dies sorgt dafür, dass Bots mehfach hintereinander gegeneinander spielen können, ohne den kompletten Namespace neu laden zu müssen
@@ -6,7 +6,12 @@
 ```
 def start(team):
   ...
-  return None #can be implicid
+  return None #can be implicit
+```
+oder
+```
+def start(team, opponent_team):
+  ...
 ```
 - Die __step__ funktion besitzt folgenden Syntax:
 ```

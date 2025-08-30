@@ -14,7 +14,6 @@ def step(board):
         for j in range(board.board_size()):
             if not board[i, j]:
                 if random() > 0.3:
-                    return f"ps#[{i},{j}]"
+                    return f"PS;({i},{j})"
                 else:
-                    return f"pw#[{i},{j}]"
-
+                    return f"PW;({i},{j})"

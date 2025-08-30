@@ -16,8 +16,8 @@ BOARD_SIZE = 5
 tw = Team(BOARD_SIZE)
 tb = Team(BOARD_SIZE)
 
-pw = PlayerController(root, 0, 0, tw)
-pb = PlayerController(root, 0, 2, tb)
+pw = PlayerController(root, 0, 0, tw, tb)
+pb = PlayerController(root, 0, 2, tb, tw)
 
 t = TakController(root, 0, 1, tw, tb, board_size=BOARD_SIZE)
 
