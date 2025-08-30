@@ -9,3 +9,6 @@ Players/bot*
 
 # Ignore Custom Files
 ignore*
+
+# Ignore rope refactoring
+.ropeproject/
