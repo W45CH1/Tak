@@ -2,6 +2,7 @@ import io
 import os.path
 import sys
 import time
+import traceback
 from tkinter import Frame, Text, filedialog, END, Label
 from tkinter.ttk import Combobox
 
@@ -52,7 +53,11 @@ class PlayerController:
         self.selected_player = None
         for file in os.listdir(AUTO_LOAD_PATH):
             if file[-3:None] == ".py":
-                self.add_player(os.path.join(AUTO_LOAD_PATH, file))
+                try:
+                    self.add_player(os.path.join(AUTO_LOAD_PATH, file))
+                except KeyError or FileNotFoundError as err:
+                    self.write_to_output("".join(traceback.format_exception(*sys.exc_info())))
+
 
     def update_selected(self):
         selected = self.combobox.get()
@@ -68,8 +73,8 @@ class PlayerController:
 
     def add_player(self, path):
         name = os.path.split(path)[1].replace(".py", "")
-        self.combobox['values'] = self.combobox['values'] + (name,)
         player = Player(path)
+        self.combobox['values'] = self.combobox['values'] + (name,)
         self.players[name] = player
         return player
 
