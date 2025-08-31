@@ -21,7 +21,7 @@ class GameEndException(Exception):
 
 
 class PlayerController:
-    def __init__(self, master, row, column, team):
+    def __init__(self, master, row, column, team, opponent_team):
         frame = Frame(master)
         frame.grid(row=row, column=column, padx=20, pady=20)
 
@@ -38,6 +38,7 @@ class PlayerController:
         self.output.grid(row=3)
 
         self.team = team
+        self.opponent_team = opponent_team
 
         self.time_label = Label(frame, width=20, text=f"{self.team.get_time()} s")
         self.time_label.grid(row=0)
@@ -63,7 +64,7 @@ class PlayerController:
         else:
             self.selected_player = self.players[selected]
 
-        self.start(self.team)
+        self.start(self.team, self.opponent_team)
 
     def add_player(self, path):
         name = os.path.split(path)[1].replace(".py", "")
@@ -92,8 +93,8 @@ class PlayerController:
         self.write_to_output(output_buffer.getvalue())
         return out
 
-    def start(self, team):
-        return self.capture_output(self.selected_player.start, team)
+    def start(self, team, opponent_team):
+        return self.capture_output(self.selected_player.start, team, opponent_team)
 
     def step(self, board):
         return self.capture_output(self.selected_player.step, board)

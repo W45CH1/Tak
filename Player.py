@@ -1,3 +1,5 @@
+import inspect
+
 class Player:
     def __init__(self,file_path):
         assert file_path[-3:None] == ".py", "Player file must be a python file"
@@ -19,8 +21,14 @@ class Player:
         self.step_func = step_func
         self.namespace = namespace
 
-    def start(self,team):
-        return self.start_func(team)
+    def start(self,team,opponent_team):
+        signature = inspect.signature(self.start_func)
+        num_args = len(signature.parameters)
+        if num_args == 1:
+            return self.start_func(team)
+        else:
+            return self.start_func(team,opponent_team)
+
 
     def step(self,board):
         return self.step_func(board)
