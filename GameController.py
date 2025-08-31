@@ -12,10 +12,14 @@ class GameController:
         assert isinstance(player_controller1, PlayerController)
         assert isinstance(player_controller2, PlayerController)
 
+        self.master = master
+
         frame = Frame(master)
         frame.grid(row=row, column=column)
 
-        Button(frame, text="run", command=self.run).grid(row=0, column=0)
+        self.is_running = False
+        self.toggle_run_button = Button(frame, text="run", command=self.toggle_run)
+        self.toggle_run_button.grid(row=0, column=0)
         Button(frame, text="step", command=self.step).grid(row=0, column=1)
 
         self.tak_controller = tak_controller
@@ -24,9 +28,21 @@ class GameController:
 
         self.white_next = True
 
+    def toggle_run(self):
+        if self.is_running:
+            self.is_running = False
+            self.toggle_run_button.config(text="run")
+        else:
+            self.is_running = True
+            self.toggle_run_button.config(text="stop")
+            self.run()
+
     def run(self):
-        while self.step():
-            pass
+        if self.step() and self.is_running:
+            self.master.after(100, self.run)
+        else:
+            self.is_running = False
+            self.toggle_run_button.config(text="run")
 
     def step(self):
         if self.white_next:
