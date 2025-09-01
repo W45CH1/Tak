@@ -147,7 +147,8 @@ class Tak:
                 assert len(new_board[position_to]) == 0 or new_board[position_to][-1].kind == "stone"
             elif taking[-1].kind == "capstone":
                 assert len(new_board[position_to]) == 0 or new_board[position_to][-1].kind in {"stone", "wall"}
-                new_board[position_to][-1].kind = "stone"
+                if len(new_board[position_to]) > 0:
+                    new_board[position_to][-1].kind = "stone"
             else:
                 raise ValueError
             new_board[position_to] = new_board[position_to] + taking[0:drop_counts[0]]
