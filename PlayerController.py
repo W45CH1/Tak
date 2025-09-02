@@ -81,6 +81,7 @@ class PlayerController:
     def write_to_output(self, text):
         self.output['state'] = "normal"
         self.output.insert(END, text)
+        self.output.yview(END)
         self.output['state'] = "disabled"
 
     def capture_output(self, func, *args):
