@@ -55,7 +55,7 @@ class PlayerController:
             if file[-3:None] == ".py":
                 try:
                     self.add_player(os.path.join(AUTO_LOAD_PATH, file))
-                except KeyError or FileNotFoundError as err:
+                except KeyError or FileNotFoundError or ValueError as  err:
                     self.write_to_output("".join(traceback.format_exception(*sys.exc_info())))
 
 
