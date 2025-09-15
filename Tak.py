@@ -131,6 +131,7 @@ class Tak:
         assert len(self.board[position_from]) > 0
         assert self.board[position_from][-1].team is team
         count = sum(drop_counts)
+        assert count > 0
         assert count <= len(self.board[position_from])
         assert count <= self.board_size
         new_board = self.board.copy() # We need this copy, so we don't end up in an invalid state, if we throw an exception

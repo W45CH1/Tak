@@ -3,7 +3,7 @@ from random import random
 from Tak import Board
 
 
-def start(team):
+def start(team, _enemy):
     print("start Dummy")
 
 def step(board):
